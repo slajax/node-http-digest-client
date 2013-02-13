@@ -137,7 +137,5 @@ var HTTPDigest = function () {
   return HTTPDigest;
 }();
 
-module.exports = function createDigestClient(username, password) {
-  return new HTTPDigest(username, password);
-};
+module.exports = HTTPDigest;
 
