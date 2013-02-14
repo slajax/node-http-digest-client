@@ -93,6 +93,7 @@ var HTTPDigest = function () {
   // ## Parse challenge digest
   //
   HTTPDigest.prototype._parseChallenge = function parseChallenge(digest) {
+    if(!digest) return {};
     var prefix = "Digest ";
     var challenge = digest.substr(digest.indexOf(prefix) + prefix.length);
     var parts = challenge.split(',');
