@@ -61,7 +61,7 @@ var HTTPDigest = function () {
       responseParams.push(cnonce);
     }
 
-    responseParams.push(challenge.qop);
+    if(challenge.qop) responseParams.push(challenge.qop);
     responseParams.push(ha2.digest('hex'));
     response.update(responseParams.join(':'));
 
@@ -83,6 +83,7 @@ var HTTPDigest = function () {
     var headers = options.headers || {};
     headers.Authorization = this._compileParams(authParams);
     options.headers = headers;
+
 
     http.request(options, function (res) {
       callback(res);
