@@ -22,9 +22,11 @@ var HTTPDigest = function () {
   //
   HTTPDigest.prototype.request = function (options, callback) {
     var self = this;
-    http.request(options, function (res) {
+    var request = http.request(options, function (res) {
       self._handleResponse(options, res, callback);
-    }).end();
+    });
+    request.end();
+    return request;
   };
 
   //
