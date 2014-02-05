@@ -20,11 +20,18 @@ var HTTPDigest = function () {
   //
   // Wraps the http.request function to apply digest authorization.
   //
-  HTTPDigest.prototype.request = function (options, callback) {
+  HTTPDigest.prototype.request = function (options, sCallback, eCallback) {
     var self = this;
     var request = http.request(options, function (res) {
-      self._handleResponse(options, res, callback);
+      self._handleResponse(options, res, sCallback);
     });
+
+    if(typeof eCallback === 'function')
+      request.on('error', eCallback)
+    else request.on('error', function(err) {
+      console.log(err)
+    })
+
     request.end();
     return request;
   };
