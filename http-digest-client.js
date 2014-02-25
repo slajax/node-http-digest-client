@@ -22,9 +22,18 @@ var HTTPDigest = function () {
   //
   HTTPDigest.prototype.request = function (options, sCallback, eCallback) {
     var self = this;
-    var request = http.request(options, function (res) {
-      self._handleResponse(options, res, sCallback);
-    });
+    
+    if (options.protocol && options.protocol.indexOf('https') === 0) {
+      delete options.protocol;
+      var request = https.request(options, function (res) {
+        self._handleResponse(options, res, sCallback);
+      });
+    } else {
+      delete options.protocol;
+      var request = http.request(options, function (res) {
+        self._handleResponse(options, res, sCallback);
+      });
+    };
 
     if(typeof eCallback === 'function')
       request.on('error', eCallback)
