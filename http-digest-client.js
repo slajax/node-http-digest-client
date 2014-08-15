@@ -7,12 +7,12 @@
 
 var HTTPDigest = function () {
   var crypto = require('crypto');
-  var http = require('http');
 
-  var HTTPDigest = function (username, password) {
+  var HTTPDigest = function (username, password, https) {
     this.nc = 0;
     this.username = username;
     this.password = password;
+    this.http = https ? require('https') : require('http');
   };
 
   //
@@ -22,18 +22,11 @@ var HTTPDigest = function () {
   //
   HTTPDigest.prototype.request = function (options, sCallback, eCallback) {
     var self = this;
-    
-    if (options.protocol && options.protocol.indexOf('https') === 0) {
-      delete options.protocol;
-      var request = https.request(options, function (res) {
-        self._handleResponse(options, res, sCallback);
-      });
-    } else {
-      delete options.protocol;
-      var request = http.request(options, function (res) {
-        self._handleResponse(options, res, sCallback);
-      });
-    };
+
+    // delete options.protocol;
+    var request = self.http.request(options, function (res) {
+      self._handleResponse(options, res, sCallback);
+    });
 
     if(typeof eCallback === 'function')
       request.on('error', eCallback)
@@ -102,8 +95,7 @@ var HTTPDigest = function () {
     headers.Authorization = this._compileParams(authParams);
     options.headers = headers;
 
-
-    http.request(options, function (res) {
+    this.http.request(options, function (res) {
       callback(res);
     }).end();
   };
@@ -119,8 +111,8 @@ var HTTPDigest = function () {
     var length = parts.length;
     var params = {};
     for (var i = 0; i < length; i++) {
-      var part = parts[i].match(/^\s*?([a-zA-Z0-0]+)="(.*)"\s*?$/);
-      if (part.length > 2) {
+      var part = parts[i].match(/^\s*?([a-zA-Z0-0]+)=?"(.*)?"\s*?$/);
+      if (part && part.length > 2) {
         params[part[1]] = part[2];
       }
     }
@@ -158,4 +150,3 @@ var HTTPDigest = function () {
 }();
 
 module.exports = HTTPDigest;
-
