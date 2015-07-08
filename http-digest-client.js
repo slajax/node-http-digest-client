@@ -23,6 +23,13 @@ var HTTPDigest = function () {
   HTTPDigest.prototype.request = function (options, sCallback, eCallback) {
     var self = this;
 
+    //remove null and undefined headers
+    var headers = options.headers;
+    for (key in headers) {
+      if(headers[key] === null || headers[key] === undefined)
+        delete headers[key];
+    };
+
     // delete options.protocol;
     var request = self.http.request(options, function (res) {
       self._handleResponse(options, res, sCallback);
